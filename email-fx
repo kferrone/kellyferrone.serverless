@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+export NODE_RUNTIME=${NODE_RUNTIME:=nodejs6}
+
+
+
+pushFX() {
+	local cloudFX=$1
+	shift
+	gcloud functions deploy $cloudFX --runtime $NODE_RUNTIME $@
+}
+
+sayHello() {
+	echo "Hello Cloud FX! $(getBucketName) Is the bucket name.";
+}
+
+getBucketName() {
+	node -e "console.log(require('./config.json').EVENT_BUCKET);"
+}
+
+sendEmail() {
+	local recipient='"to":"YOUR_RECIPIENT_ADDR"'
+	curl -X POST "https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/sendgridEmail?sg_key=$SENDGRID_KEY" \
+		--data "{$(jsonKV to $1),$(jsonKV from $2),$(jsonKV subject $3),$(jsonKV body $1)}" \
+		--header "Content-Type: application/json"	
+}
+
+jsonKV() {
+	local dqt='"'
+	echo "${dqt}${1}${dqt}:${dqt}${2}${dqt}"	
+}
+
+$@

@@ -10,6 +10,9 @@ See:
 [tutorial]: https://cloud.google.com/functions/docs/tutorials/sendgrid
 [code]: index.js
 
+## Dependencies
+ - NodeJS6
+
 ## Deploy and run the sample
 
 See the [Cloud Functions SendGrid tutorial][tutorial].
@@ -17,6 +20,10 @@ See the [Cloud Functions SendGrid tutorial][tutorial].
 ## Run the tests
 
 1. Read and follow the [prerequisites](../../#how-to-run-the-tests).
+
+**notes:**
+
+ * On Windows run this: `npm config set script-shell "C:\\Program Files\\Git\\bin\\bash.exe"`
 
 1. Install dependencies:
 
