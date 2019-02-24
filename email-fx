@@ -2,7 +2,9 @@
 
 export NODE_RUNTIME=${NODE_RUNTIME:=nodejs6}
 
-
+preInstall() {
+	mkdir -p ./env
+}
 
 pushFX() {
 	local cloudFX=$1
@@ -20,9 +22,13 @@ getBucketName() {
 
 sendEmail() {
 	local recipient='"to":"YOUR_RECIPIENT_ADDR"'
-	curl -X POST "https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/sendgridEmail?sg_key=$SENDGRID_KEY" \
-		--data "{$(jsonKV to $1),$(jsonKV from $2),$(jsonKV subject $3),$(jsonKV body $1)}" \
+	curl -X POST "https://${GCLOUD_REGION}-${GCLOUD_PROJECT}.cloudfunctions.net/sendgridEmail?sg_key=$SENDGRID_KEY" \
+		--data '{"to":"kellyferrone@gmail.com","from":"kelly@slconnected.com","subject":"Hello from Sendgrid!","body":"Hello World!"}' \
 		--header "Content-Type: application/json"	
+}
+
+sendEmailTest() {
+	echo "{$(jsonKV to $1),$(jsonKV from $2),$(jsonKV subject $3),$(jsonKV body $4)}"
 }
 
 jsonKV() {

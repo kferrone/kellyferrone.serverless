@@ -14,4 +14,13 @@
 .gitignore
 
 node_modules
-#!include:.gitignore
+
+
+email-fx
+email-fx.http
+env/
+test/
+.vscode/
+.settings/
+.project
+README.md
