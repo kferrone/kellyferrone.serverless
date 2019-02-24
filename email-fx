@@ -12,6 +12,10 @@ pushFX() {
 	gcloud functions deploy $cloudFX --runtime $NODE_RUNTIME $@
 }
 
+viewFxLogs() {
+	gcloud functions logs read --limit 100
+}
+
 sayHello() {
 	echo "Hello Cloud FX! $(getBucketName) Is the bucket name.";
 }
@@ -21,9 +25,8 @@ getBucketName() {
 }
 
 sendEmail() {
-	local recipient='"to":"YOUR_RECIPIENT_ADDR"'
-	curl -X POST "https://${GCLOUD_REGION}-${GCLOUD_PROJECT}.cloudfunctions.net/sendgridEmail?sg_key=$SENDGRID_KEY" \
-		--data '{"to":"kellyferrone@gmail.com","from":"kelly@slconnected.com","subject":"Hello from Sendgrid!","body":"Hello World!"}' \
+	curl -X POST "https://${GCLOUD_REGION}-${GCLOUD_PROJECT}.cloudfunctions.net/sendgridEmail" \
+		--data '{"from":"kelly@slconnected.com","subject":"Hello from Sendgrid!","body":"Hello World! I am ready now :D"}' \
 		--header "Content-Type: application/json"	
 }
 

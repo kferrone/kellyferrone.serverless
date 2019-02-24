@@ -13,9 +13,11 @@
   },
   "scripts": {
     "test": "ava -T 20s --verbose test/*.test.js",
+    "deploy": "npm run deploy:sendgridEmail && npm run deploy:sendgridWebhook && npm run deploy:sendgridLoad",
     "deploy:sendgridEmail": "./email-fx pushFX sendgridEmail --trigger-http",
     "deploy:sendgridWebhook": "./email-fx pushFX sendgridWebhook --trigger-http",
-    "deploy:sendgridLoad": "./email-fx pushFX sendgridLoad --trigger-bucket $(./email-fx getBucketName)"
+    "deploy:sendgridLoad": "./email-fx pushFX sendgridLoad --trigger-bucket $(./email-fx getBucketName)",
+    "logs": "./email-fx viewFxLogs"
   },
   "dependencies": {
     "@google-cloud/bigquery": "^2.0.0",
