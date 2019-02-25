@@ -20,6 +20,7 @@ const Buffer = require('safe-buffer').Buffer;
 const sendgrid = require('sendgrid');
 const config = require('./config.json');
 const uuid = require('uuid');
+const cors = require('cors');
 
 // Get a reference to the Cloud Storage component
 const {
@@ -112,6 +113,12 @@ function getPayload(requestBody) {
 // [END functions_get_payload]
 
 // [START functions_sendgrid_email]
+exports.sendgridEmail = (req, res) => {
+    var corsFn = cors();
+    corsFn(req, res, function() {
+        exports.sendgridEmailFn(req,res);
+    });
+};
 /**
  * Send an email using SendGrid.
  *
@@ -131,8 +138,8 @@ function getPayload(requestBody) {
  * @param {string} req.body.body Body of the email subject line.
  * @param {object} res Cloud Function response context.
  */
-exports.sendgridEmail = (req, res) => {
-    res.set('Access-Control-Allow-Origin', "*");
+exports.sendgridEmailFn = (req, res) => {
+    //res.set('Access-Control-Allow-Origin', "*");
 
     return Promise.resolve()
         .then(() => {
