@@ -1,0 +1,22 @@
+{
+  "name": "sitemap",
+  "version": "1.0.0",
+  "description": "A cloud function to build a sitemap for the frontend site",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kferrone/kellyferrone.serverless.git"
+  },
+  "keywords": [
+    "serverless"
+  ],
+  "author": "Kelly Ferrone",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kferrone/kellyferrone.serverless/issues"
+  },
+  "homepage": "https://github.com/kferrone/kellyferrone.serverless#readme"
+}
