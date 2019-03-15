@@ -1,10 +1,12 @@
 {
-  "name": "sitemap",
+  "name": "blogger",
   "version": "1.0.0",
   "description": "A cloud function to build a sitemap for the frontend site",
+  "homepage": "https://github.com/kferrone/kellyferrone.serverless#readme",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "push:sitemapper": "gcloud functions deploy siteMapper --runtime nodejs6 --trigger-http"
   },
   "repository": {
     "type": "git",
@@ -18,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/kferrone/kellyferrone.serverless/issues"
   },
-  "homepage": "https://github.com/kferrone/kellyferrone.serverless#readme"
+  "dependencies": {
+    "axios": "^0.18.0",
+    "xmlbuilder": "^11.0.0"
+  }
 }

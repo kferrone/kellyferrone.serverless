@@ -1,4 +1,5 @@
-var axios = require('axios');
+const axios = require('axios');
+const querystring = require('querystring');
 
 //constantly constant
 const VERSION = 'v3';
@@ -10,7 +11,7 @@ const PAGES = 'pages';
 const SELF = 'self';
 const COMMENTS = 'comments';
 
-exports.default = class BloggerAPI {
+module.exports = class BloggerAPI {
     constructor(id, key) {
         this.id = id;
         this.key = key;
@@ -37,8 +38,9 @@ exports.default = class BloggerAPI {
         return `${endpoint}?${this.keyParam}`;
     }
 
-    get(endpoint) {
-        return axios.get(this.appendKey(endpoint));
+    get(endpoint, params = null) {
+        let paramStr = (params == null) ? '' : querystring.stringify(params);
+        return axios.get(this.appendKey(endpoint) + '&' + paramStr);
     }
 
     getUser(userID) {
@@ -67,8 +69,8 @@ exports.default = class BloggerAPI {
         return this.get(this.blogsEndpoint);
     }
 
-    getPosts() {
-        return this.get(this.postsEndpoint);
+    getPosts(params = null) {
+        return this.get(this.postsEndpoint,params);
     }
 
     getPost(postID) {
@@ -83,8 +85,8 @@ exports.default = class BloggerAPI {
         return this.get(`${this.postsEndpoint}/${postID}/${COMMENTS}/${commentID}`);
     }
 
-    getPages() {
-        return this.get(this.pagesEndpoint);
+    getPages(params = null) {
+        return this.get(this.pagesEndpoint,params);
     }
 
     getPage(id) {
