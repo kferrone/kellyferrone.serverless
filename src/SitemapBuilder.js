@@ -15,12 +15,12 @@ module.exports = class SitemapBuilder {
         });
     }
 
-    add(loc, lastMod = null) {
+    add(loc, lastmod = null) {
         if (this.finished) return;
         this.sitemap.ele({
             url: {
                 loc,
-                lastMod
+                lastmod
             }
         });
     }

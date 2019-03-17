@@ -90,7 +90,7 @@ exports.getSitemap = (req, res) => {
             });
 
             //finally add all of the URLs to the actual sitemap XML
-            let siteMap = buildSitemap(listOfURL,true);
+            let siteMap = buildSitemap(listOfURL,false);
 
             //send off the sitemap to the requestor
             res
