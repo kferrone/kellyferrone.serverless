@@ -3,7 +3,7 @@ const SendGridAPI = require('./lib/SendGridAPI');
 const functions = require('firebase-functions');
 const Sitemap = require('./lib/Sitemap');
 const cors = require('cors');
-const config  = functions.config();
+const config  = functions.config().app;
 
 exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase! The email in the config is " + config.sendGrid.email);

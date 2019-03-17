@@ -39,4 +39,8 @@ jsonKV() {
 	echo "${dqt}${1}${dqt}:${dqt}${2}${dqt}"	
 }
 
+loadFirebaseConfig() {
+    cat ./src/.runtimeconfig.json | node ./bin/firebaseConfigLoader.js
+}
+
 $@

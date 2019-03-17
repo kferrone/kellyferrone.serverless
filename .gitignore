@@ -4,4 +4,5 @@ test.js
 .settings
 .*.md.html
 env/
+firebase-debug.log
 .runtimeconfig.json

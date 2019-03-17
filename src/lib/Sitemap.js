@@ -1,7 +1,7 @@
 var blogger = require('./blogger');
 var SitemapBuilder = require('./SitemapBuilder');
 const functions = require('firebase-functions');
-const config  = functions.config();
+const config  = functions.config().app;
 
 var _this = this;
 
