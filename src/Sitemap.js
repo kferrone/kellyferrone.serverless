@@ -1,4 +1,4 @@
-var blogger = require('./blogger');
+var blogger = require('./Blogger');
 var SitemapBuilder = require('./SitemapBuilder');
 const functions = require('firebase-functions');
 const config  = functions.config().app;

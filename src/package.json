@@ -14,7 +14,7 @@
     "url": "git+https://github.com/kferrone/kellyferrone.serverless.git"
   },
   "engines": {
-    "node": "6.11"
+    "node": "8"
   },
   "keywords": [
     "serverless"
