@@ -84,7 +84,7 @@ exports.getSitemap = (req, res) => {
 
             //make a list of URLs from the promised pages and posts
             values.forEach(({data}) => {
-                let path = (data.kind == BLOGGER_POSTLIST) ? `#/posts` : '#';
+                let path = (data.kind == BLOGGER_POSTLIST) ? `#/post` : '#';
                 let listOfItems = buildUrls(data.items,`${host}/${path}`);
                 listOfURL = listOfURL.concat(listOfItems);
             });
