@@ -3,10 +3,10 @@ const SendGridAPI = require('./SendGridAPI');
 const functions = require('firebase-functions');
 const Sitemap = require('./Sitemap');
 const cors = require('cors');
-const config  = functions.config().app;
+const config  = functions.config();
 
 exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send("Hello from Firebase! The email in the config is " + config.sendGrid.email);
+  response.send("Hello from Firebase! The email in the config is " + config.sendgrid.email);
 });
 
 /**
@@ -16,7 +16,7 @@ exports.siteMap = functions.https.onRequest((req, res) => {
     console.log('Making the sitemap');
     var corsFn = cors();
     corsFn(req, res, function() {
-        Sitemap.getSitemap(req,res);
+		Sitemap.getSitemap(req,res);
     });
 });
 

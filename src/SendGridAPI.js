@@ -2,7 +2,7 @@ const sendgrid = require('sendgrid');
 const uuid = require('uuid');
 const Buffer = require('safe-buffer').Buffer;
 const functions = require('firebase-functions');
-const config  = functions.config().app;
+const config  = functions.config();
 
 // Get a reference to the Cloud Storage component
 const {
@@ -79,7 +79,7 @@ function getPayload(requestBody) {
     return {
         personalizations: [{
             to: [{
-                email: config.sendGrid.email,
+                email: config.sendgrid.email,
             }, ],
             subject: requestBody.subject,
         }, ],
@@ -127,7 +127,7 @@ exports.sendgridEmailFn = (req, res) => {
 
             // Get a SendGrid client
             //const client = getClient(req.query.sg_key);
-            const client = getClient(config.sendGrid.key);
+            const client = getClient(config.sendgrid.key);
 
             // Build the SendGrid request to send email
             const request = client.emptyRequest({
@@ -138,7 +138,7 @@ exports.sendgridEmailFn = (req, res) => {
 
             // Make the request to SendGrid's API
             //console.log(`Sending email to: ${req.body.to}`);
-            console.log(`Sending email to: ${config.sendGrid.email}`);
+            console.log(`Sending email to: ${config.sendgrid.email}`);
             return client.API(request);
         })
         .then(response => {
@@ -148,7 +148,7 @@ exports.sendgridEmailFn = (req, res) => {
                 throw error;
             }
 
-            console.log(`Email sent to: ${config.sendGrid.email}`);
+            console.log(`Email sent to: ${config.sendgrid.email}`);
 
             // Forward the response back to the requester
             res.status(response.statusCode);
@@ -248,7 +248,7 @@ exports.sendgridWebhook = (req, res) => {
 
             // Upload a new file to Cloud Storage if we have events to save
             if (json.length) {
-                const bucketName = config.gCloud.eventBucket;
+                const bucketName = config.gcloud.eventbucket;
                 const unixTimestamp = new Date().getTime() * 1000;
                 const filename = `${unixTimestamp}-${uuid.v4()}.json`;
                 const file = storage.bucket(bucketName).file(filename);

@@ -1,7 +1,7 @@
-var blogger = require('./Blogger');
-var SitemapBuilder = require('./SitemapBuilder');
+const blogger = require('./Blogger');
+const SitemapBuilder = require('./SitemapBuilder');
 const functions = require('firebase-functions');
-const config  = functions.config().app;
+const config  = functions.config();
 
 var _this = this;
 
@@ -11,7 +11,7 @@ var _this = this;
  * @param pretty True if you want the XML to be in pretty format. 
  */
 function buildSitemap(listOfURL = Array,pretty = false) {
-    let sitemapBuilder = new SitemapBuilder();
+	let sitemapBuilder = new SitemapBuilder();
     listOfURL.forEach((url) => {
         sitemapBuilder.add(url.loc,url.lastMod);
     });
@@ -52,9 +52,8 @@ function sanitizeTitle(title) {
 exports.getSitemap = (req, res) => {
     return Promise.resolve()
         .then(() => {
-            
-            //get the blogger client so we can make some requests
-            const client = blogger.getClient(config.blogger.blogID,config.blogger.key);
+			//get the blogger client so we can make some requests
+            const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
 
             //make sure the request only returns the title and date updated, it's all we need
             var params = {
@@ -69,7 +68,6 @@ exports.getSitemap = (req, res) => {
             ]);
         })
         .then((values) => {
-            
             //the hostname to prefix each page and post with
             const host = config.host;
             const BLOGGER_POSTLIST = 'blogger#postList';
@@ -99,7 +97,8 @@ exports.getSitemap = (req, res) => {
                 .send(siteMap);
         })
         .catch((e) => {
-            res.status(500).send(e);
+			console.error('There was an error',e);
+			res.status(500).send(e);
             return Promise.reject(e);
         });
 };

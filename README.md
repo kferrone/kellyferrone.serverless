@@ -18,7 +18,7 @@ See:
 [code]: index.js
 
 ## Dependencies
- - NodeJS6
+ - NodeJS8
 
 ## Deploy and run the sample
 
@@ -46,11 +46,49 @@ Create a file called `config.json` with the following:
 
 ```json
 {
-  "EVENT_BUCKET": "[YOUR_EVENT_BUCKET_NAME]",
-  "DATASET": "[YOUR_DATASET_NAME]",
-  "TABLE": "events",
-  "USERNAME": "[YOUR_USERNAME]",
-  "PASSWORD": "[YOUR_PASSWORD]"
+  "host": "",
+  "blogger": {
+    "key": "",
+    "blogID": ""
+  },
+  "sendGrid": {
+      "key": "",
+      "email": ""
+  },
+  "gCloud": {
+      "project": "",
+      "region": "",
+      "eventBucket":"",
+      "dataset": ""
+  },
+  "webhooks": {
+      "username": "",
+      "password": ""
+  }
 }
 ```
 
+then run the command below to save
+
+```sh
+firebase functions:config:set app="$(cat config.json)"
+```
+
+now run this to see the config
+```sh
+firebase functions:config:get app
+```
+
+## Deployment  
+
+To deploy the functions manually simply run:
+
+```sh
+firebase deploy
+```
+
+To deploy the automated CI way, you must first update the version of the project with node: 
+
+```sh
+npm version patch
+```

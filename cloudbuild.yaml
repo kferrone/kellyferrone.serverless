@@ -1,0 +1,9 @@
+steps:
+  - id: deploy
+    name: 'gcr.io/kellyferrone-211016/firebase'
+    args: ['deploy']
+    env:
+      - 'FIREBASE_TOKEN=$_FIREBASE_TOKEN'
+
+substitutions:
+  _FIREBASE_TOKEN: token
