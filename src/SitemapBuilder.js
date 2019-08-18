@@ -1,4 +1,4 @@
-var xmlbuilder = require('xmlbuilder');
+const xmlbuilder = require('xmlbuilder');
 
 const xmlns_xsi = 'http://www.w3.org/2001/XMLSchema-instance';
 const xsi_schemaLocation = 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd';
