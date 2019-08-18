@@ -1,31 +1,33 @@
 const xmlbuilder = require('xmlbuilder');
 
+const xmlns = 'http://www.w3.org/2005/Atom';
+
 module.exports = class RssBuilder {
 
 	constructor() {
 		this.finished = false;
-		this.rss = xmlbuilder.create({
-            rss: {
-				'@version': '2.0'
-			}
-        }).ele('channel');
+        this.atom = xmlbuilder.create({
+            feed: {
+                '@xmlns': xmlns
+            }
+        });
 	}
 
 	setMeta(meta) {
 		if (this.finished) return;
-		this.rss.ele(meta);
+		this.atom.ele(meta);
 	}
 
-	add(item) {
+	add(entry) {
 		if (this.finished) return;
-		this.rss.ele({
-			item
+		this.atom.ele({
+			entry
 		});
 	}
 
 	finish(pretty = false) {
         this.finished = true;
-        return this.rss.end({ pretty });
+        return this.atom.end({ pretty });
     }
 
 }
