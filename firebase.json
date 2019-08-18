@@ -1,5 +1,19 @@
 {
   "functions": {
-    "source": "src"
+	"source": "./",
+	"ignore": [
+	  "firebase.json",
+	  "**/node_modules/**",
+	  ".firebaserc",
+	  ".editorconfig",
+	  ".vscode/**",
+	  "*.md",
+	  ".gitignore",
+	  ".gcloudignore",
+	  ".project",
+	  ".settings/**",
+	  "cloudbuild.yaml",
+	  "*.sh"
+    ]
   }
 }

@@ -1,7 +1,7 @@
 
-const SendGridAPI = require('./SendGridAPI');
+const SendGridAPI = require('./src/SendGridAPI');
 const functions = require('firebase-functions');
-const Sitemap = require('./Sitemap');
+const Sitemap = require('./src/Sitemap');
 const cors = require('cors');
 const config  = functions.config();
 
