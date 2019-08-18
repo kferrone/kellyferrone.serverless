@@ -2,7 +2,7 @@ const sendgrid = require('sendgrid');
 const uuid = require('uuid');
 const Buffer = require('safe-buffer').Buffer;
 const functions = require('firebase-functions');
-const config  = functions.config();
+const config  = functions.config().app;
 
 // Get a reference to the Cloud Storage component
 const {
