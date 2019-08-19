@@ -1,11 +1,14 @@
 
 const SendGridAPI = require('./src/SendGridAPI');
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const sitemapFx = require('./src/SitemapFx');
 const cors = require('cors');
 const config  = functions.config().app;
 const blogger = require('./src/Blogger');
 const rssFx = require('./src/RssFx');
+
+admin.initializeApp(functions.config().firebase);
 
 function errorHandler(res) {
 	return e => {
@@ -85,3 +88,5 @@ exports.sendgridWebhook = functions.https.onRequest((req, res) => {
         SendGridAPI.sendgridWebhook(req,res);
     });
 });
+
+exports.blogFx = functions.https.onRequest(require('./src/BloggerFx').app);
