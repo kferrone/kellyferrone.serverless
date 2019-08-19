@@ -4,11 +4,11 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const sitemapFx = require('./src/SitemapFx');
 const cors = require('cors');
-const config  = functions.config().app;
+const config  = functions.config();
 const blogger = require('./src/Blogger');
 const rssFx = require('./src/RssFx');
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(config.firebase);
 
 function errorHandler(res) {
 	return e => {
@@ -26,7 +26,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
  * Get the RSS.xml
  */
 exports.rssFeed = functions.https.onRequest((req,res) => {
-	const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
+	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
 	rssFx.getRss(client)
 	.then(rssFile => {
 		res
@@ -41,7 +41,7 @@ exports.rssFeed = functions.https.onRequest((req,res) => {
  * Get the Atom.xml
  */
 exports.atomFeed = functions.https.onRequest((req,res) => {
-	const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
+	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
 	require('./src/AtomFx')
 		.getAtom(client)
 		.then(atomFile => {
@@ -57,8 +57,8 @@ exports.atomFeed = functions.https.onRequest((req,res) => {
  * Get the sitemap.xml
  */
 exports.siteMap = functions.https.onRequest((req, res) => {
-	const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
-	sitemapFx.getSitemap(client,config)
+	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
+	sitemapFx.getSitemap(client,config.app)
 	.then(siteMap => {
 		//send off the sitemap to the requestor
 		res
@@ -89,4 +89,7 @@ exports.sendgridWebhook = functions.https.onRequest((req, res) => {
     });
 });
 
-exports.blogFx = functions.https.onRequest(require('./src/BloggerFx').app);
+/**
+ * Handles all the blogger content
+ */
+exports.blogFx = functions.https.onRequest(require('./src/BloggerFx').getApp(config.app));

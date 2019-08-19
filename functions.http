@@ -1,0 +1,29 @@
+@blogger_url = https://www.googleapis.com/blogger/v3
+@url = http://localhost:5000
+@blogs = {{blogger_url}}/blogs/{{BLOGGER_BLOG_ID}}
+@posts = {{blogs}}/posts
+@pages = {{blogs}}/pages
+@users = {{blogger_url}}/users
+
+### get the meta from the front end 
+GET {{url}}/blog/meta
+
+### Get a user
+GET {{users}}/{{BLOGGER_USER_ID}}?key={{BLOGGER_API_KEY}}
+### Get the blog meta data
+GET {{blogs}}?key={{BLOGGER_API_KEY}}
+
+### Get the posts
+GET {{posts}}?key={{BLOGGER_API_KEY}}
+
+### Get the pages
+GET {{pages}}?key={{BLOGGER_API_KEY}}
+
+### rss feed of mine
+GET {{url}}/rss.xml
+
+### atom feed of mine
+GET {{url}}/atom.xml
+
+### sitemap of mine
+GET {{url}}/sitemap.xml
