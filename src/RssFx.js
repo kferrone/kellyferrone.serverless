@@ -36,7 +36,7 @@ function metaToRssMeta(meta) {
 	}
 }
 
-exports.buildRss = function(meta = null, posts = Array, pretty = false) {
+function buildRss(meta = null, posts = Array, pretty = false) {
 	let rssBuilder = new RssBuilder();
 
 	if (meta !== null) rssBuilder.setMeta(metaToRssMeta(meta));
@@ -45,4 +45,34 @@ exports.buildRss = function(meta = null, posts = Array, pretty = false) {
 		rssBuilder.add(postToRssItem(post));
 	});
 	return rssBuilder.finish(pretty);
+}
+
+exports.getRss = function(client) {
+	return Promise.resolve()
+		.then(() => {
+			return Promise.all([
+				client.getBlog(),
+				client.getPosts()
+			]);
+		})
+		.then((values) => {
+			//get the blog meta and posts from the promised values
+			let posts;
+			let blog;
+			values.forEach(({data}) => {
+				switch(data.kind) {
+					case 'blogger#postList':
+						posts = data.items;
+						break;
+					case 'blogger#blog':
+						blog = data;
+						break;
+				}
+			});
+
+			//get the rss file
+			let rssFile = buildRss(blog,posts, true);
+
+			return Promise.resolve(rssFile);
+		});
 }

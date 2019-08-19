@@ -1,11 +1,19 @@
 
 const SendGridAPI = require('./src/SendGridAPI');
 const functions = require('firebase-functions');
-const Sitemap = require('./src/Sitemap');
+const sitemapFx = require('./src/SitemapFx');
 const cors = require('cors');
 const config  = functions.config().app;
 const blogger = require('./src/Blogger');
-const rss = require('./src/Rss');
+const rssFx = require('./src/RssFx');
+
+function errorHandler(res) {
+	return e => {
+		console.error('There was an error',e);
+		res.status(500).send(e);
+		return Promise.reject(e);
+	}
+}
 
 exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase! The email in the config is " + config.sendgrid.email);
@@ -16,52 +24,46 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
  */
 exports.rssFeed = functions.https.onRequest((req,res) => {
 	const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
-
-	Promise.all([
-		client.getBlog(),
-		client.getPosts()
-	])
-	.then((values) => {
-
-		//get the blog meta and posts from the promised values
-		let posts;
-		let blog;
-		values.forEach(({data}) => {
-			switch(data.kind) {
-				case 'blogger#postList':
-					posts = data.items;
-					break;
-				case 'blogger#blog':
-					blog = data;
-					break;
-			}
-		});
-
-		//get the rss file
-		let rssFile = rss.buildRss(blog,posts, true);
-
-		//send the rss file to the client
+	rssFx.getRss(client)
+	.then(rssFile => {
 		res
 			.set('content-type', 'application/rss+xml; charset=UTF-8')
 			.status(200)
 			.send(rssFile);
 	})
-	.catch((e) => {
-		console.error('There was an error',e);
-		res.status(500).send(e);
-		return Promise.reject(e);
-	});
+	.catch(errorHandler(res));
+});
+
+/**
+ * Get the Atom.xml
+ */
+exports.atomFeed = functions.https.onRequest((req,res) => {
+	const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
+	require('./src/AtomFx')
+		.getAtom(client)
+		.then(atomFile => {
+			res
+				.set('content-type', 'application/atom+xml; charset=UTF-8')
+				.status(200)
+				.send(atomFile);
+		})
+		.catch(errorHandler(res));
 });
 
 /**
  * Get the sitemap.xml
  */
 exports.siteMap = functions.https.onRequest((req, res) => {
-    console.log('Making the sitemap');
-    var corsFn = cors();
-    corsFn(req, res, function() {
-		Sitemap.getSitemap(req,res);
-    });
+	const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
+	sitemapFx.getSitemap(client,config)
+	.then(siteMap => {
+		//send off the sitemap to the requestor
+		res
+			.set('content-type', 'application/atom+xml; charset=UTF-8')
+			.status(200)
+			.send(siteMap);
+	})
+	.catch(errorHandler(res));
 });
 
 /**

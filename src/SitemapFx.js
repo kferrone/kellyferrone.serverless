@@ -1,9 +1,4 @@
-const blogger = require('./Blogger');
 const SitemapBuilder = require('./SitemapBuilder');
-const functions = require('firebase-functions');
-const config  = functions.config().app;
-
-var _this = this;
 
 /**
  * Pass in a list of URL objects and a sitemap will be made. 
@@ -49,11 +44,9 @@ function sanitizeTitle(title) {
  * @param req The request object from some client.
  * @param res The response object to send back to the client.
  */
-exports.getSitemap = (req, res) => {
+exports.getSitemap = function(client,config) {
     return Promise.resolve()
         .then(() => {
-			//get the blogger client so we can make some requests
-            const client = blogger.getClient(config.blogger.blogid,config.blogger.key);
 
             //make sure the request only returns the title and date updated, it's all we need
             var params = {
@@ -90,15 +83,6 @@ exports.getSitemap = (req, res) => {
             //finally add all of the URLs to the actual sitemap XML
             let siteMap = buildSitemap(listOfURL,false);
 
-            //send off the sitemap to the requestor
-            res
-                .set('content-type', 'application/atom+xml; charset=UTF-8')
-                .status(200)
-                .send(siteMap);
-        })
-        .catch((e) => {
-			console.error('There was an error',e);
-			res.status(500).send(e);
-            return Promise.reject(e);
+            return Promise.resolve(siteMap);
         });
 };

@@ -65,10 +65,40 @@ function metaToAtomMeta(meta) {
 function buildAtom(meta = null, posts = Array, pretty = false) {
 	let atomBuilder = new AtomBuilder();
 
-	if (meta !== null) rssBuilder.setMeta(metaToAtomMeta(meta));
+	if (meta !== null) atomBuilder.setMeta(metaToAtomMeta(meta));
 
 	posts.forEach((post) => {
 		atomBuilder.add(postToAtomEntry(post));
 	});
 	return atomBuilder.finish(pretty);
+}
+
+exports.getAtom = function(client) {
+	return Promise.resolve()
+		.then(() => {
+			return Promise.all([
+				client.getBlog(),
+				client.getPosts()
+			]);
+		})
+		.then((values) => {
+			//get the blog meta and posts from the promised values
+			let posts;
+			let blog;
+			values.forEach(({data}) => {
+				switch(data.kind) {
+					case 'blogger#postList':
+						posts = data.items;
+						break;
+					case 'blogger#blog':
+						blog = data;
+						break;
+				}
+			});
+
+			//get the atom file
+			let atomFile = buildAtom(blog,posts, true);
+
+			return Promise.resolve(atomFile);
+		});
 }
