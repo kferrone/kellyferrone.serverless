@@ -57,6 +57,16 @@ app.get("/blog/posts", function getMeta(req, res) {
 	.catch(errorHandler(res));
 });
 
+app.get("/blog/post/:postID/comments", function getMeta(req, res) {
+	client.getPostComments(req.params.postID).then(comments => {
+		res
+			.set('content-type', 'application/json')
+			.status(200)
+			.send(comments.data);
+	})
+	.catch(errorHandler(res));
+});
+
 exports.getApp = function (config) {
 	client = blogger.getClient(config.blogger.blogid, config.blogger.key);
 	return app;
