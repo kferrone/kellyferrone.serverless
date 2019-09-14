@@ -8,7 +8,12 @@ const config  = functions.config();
 const blogger = require('./src/Blogger');
 const rssFx = require('./src/RssFx');
 
-admin.initializeApp(config.firebase);
+const app = admin.initializeApp({ 
+	credential: admin.credential.cert(config.service_account)
+});
+const db = app.firestore();
+
+console.log('The fx is ' + process.env.FUNCTION_NAME, process.env.FIREBASE_PROJECT);
 
 function errorHandler(res) {
 	return e => {
@@ -18,8 +23,19 @@ function errorHandler(res) {
 	}
 }
 
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send("Hello from Firebase! The email in the config is " + config.sendgrid.email);
+exports.helloWorld = functions.https.onRequest((req, res) => {
+	
+	
+	let bloggo = db.collection('posts');
+	bloggo.get()
+	.then(snapshot => {
+		const results = [];
+		snapshot.forEach(post => {
+			results.push(post.data());
+		})
+		res.send(results);
+	})
+	.catch(errorHandler(res));
 });
 
 /**
@@ -92,4 +108,4 @@ exports.sendgridWebhook = functions.https.onRequest((req, res) => {
 /**
  * Handles all the blogger content
  */
-exports.blogFx = functions.https.onRequest(require('./src/BloggerFx').getApp(config.app));
+//exports.blogFx = functions.https.onRequest(require('./src/BloggerFx').getApp(config.app));

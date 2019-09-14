@@ -27,3 +27,6 @@ GET {{url}}/atom.xml
 
 ### sitemap of mine
 GET {{url}}/sitemap.xml
+
+### hello world of mine
+GET {{url}}/helloWorld
