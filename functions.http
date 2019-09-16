@@ -30,3 +30,9 @@ GET {{url}}/sitemap.xml
 
 ### hello world of mine
 GET {{url}}/helloWorld
+
+### get the posts from the function
+GET {{url}}/blog/posts/
+
+### get the pages from the function
+GET {{url}}/blog/pages/

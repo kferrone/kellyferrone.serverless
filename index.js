@@ -1,19 +1,7 @@
 
-const SendGridAPI = require('./src/SendGridAPI');
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const sitemapFx = require('./src/SitemapFx');
+const { functions, db, config } = require('./src/Firebase');
 const cors = require('cors');
-const config  = functions.config();
 const blogger = require('./src/Blogger');
-const rssFx = require('./src/RssFx');
-
-const app = admin.initializeApp({ 
-	credential: admin.credential.cert(config.service_account)
-});
-const db = app.firestore();
-
-console.log('The fx is ' + process.env.FUNCTION_NAME, process.env.FIREBASE_PROJECT);
 
 function errorHandler(res) {
 	return e => {
@@ -42,6 +30,7 @@ exports.helloWorld = functions.https.onRequest((req, res) => {
  * Get the RSS.xml
  */
 exports.rssFeed = functions.https.onRequest((req,res) => {
+	const rssFx = require('./src/RssFx');
 	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
 	rssFx.getRss(client)
 	.then(rssFile => {
@@ -73,6 +62,7 @@ exports.atomFeed = functions.https.onRequest((req,res) => {
  * Get the sitemap.xml
  */
 exports.siteMap = functions.https.onRequest((req, res) => {
+	const sitemapFx = require('./src/SitemapFx');
 	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
 	sitemapFx.getSitemap(client,config.app)
 	.then(siteMap => {
@@ -89,7 +79,8 @@ exports.siteMap = functions.https.onRequest((req, res) => {
  * Send an email
  */
 exports.sendgridEmail = functions.https.onRequest((req, res) => {
-    var corsFn = cors();
+	const SendGridAPI = require('./src/SendGridAPI');
+	var corsFn = cors();
     corsFn(req, res, function() {
         SendGridAPI.sendgridEmailFn(req,res);
     });
@@ -99,7 +90,8 @@ exports.sendgridEmail = functions.https.onRequest((req, res) => {
  * Handle sendgrids webhook
  */
 exports.sendgridWebhook = functions.https.onRequest((req, res) => {
-    var corsFn = cors();
+	const SendGridAPI = require('./src/SendGridAPI');
+	var corsFn = cors();
     corsFn(req, res, function() {
         SendGridAPI.sendgridWebhook(req,res);
     });
@@ -108,4 +100,4 @@ exports.sendgridWebhook = functions.https.onRequest((req, res) => {
 /**
  * Handles all the blogger content
  */
-//exports.blogFx = functions.https.onRequest(require('./src/BloggerFx').getApp(config.app));
+exports.blogFx = functions.https.onRequest(require('./src/BlogFx').getApp(config.app, db));
