@@ -6,3 +6,4 @@ test.js
 env/
 firebase-debug.log
 .runtimeconfig.json
+.firebaserc
