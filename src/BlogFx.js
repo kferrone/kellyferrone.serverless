@@ -29,8 +29,11 @@ app.get("/blog/meta", function getMeta(req, res) {
 		.catch(errorHandler(res));
 });
 
-app.get("/blog/pages", function getMeta(req, res) {
-	db.collection('posts').where('kind','==','page').get()
+app.get("/blogs/{blogID}/pages", function getMeta(req, res) {
+	db.collection('posts')
+		.where('kind','==','page')
+		.where('blog', '==', db.collection('blogs').doc(req.params.blogID))
+		.get()
 		.then(snapshot => {
 			const results = [];
 			snapshot.forEach(postRef => {
@@ -50,9 +53,12 @@ app.get("/blog/pages", function getMeta(req, res) {
 		.catch(errorHandler(res));
 });
 
-app.get("/blog/posts", function getMeta(req, res) {
+app.get("/blogs/{blogID}/posts", function getMeta(req, res) {
 
-	db.collection('posts').where('kind','==','post').get()
+	db.collection('posts')
+		.where('kind','==','post')
+		.where('blog', '==', db.collection('blogs').doc(req.params.blogID))
+		.get()
 		.then(snapshot => {
 			const results = [];
 			snapshot.forEach(postRef => {
@@ -70,6 +76,10 @@ app.get("/blog/posts", function getMeta(req, res) {
 				});
 
 				post.slug = urlSlug(post.title);
+
+				post.blog = {
+					id: post.blog.id
+				}
 
 				results.push(post);
 			});

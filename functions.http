@@ -32,7 +32,7 @@ GET {{url}}/sitemap.xml
 GET {{url}}/helloWorld
 
 ### get the posts from the function
-GET {{url}}/blog/posts/
+GET {{url}}/blogs/{{BLOG_ID}}/posts/
 
 ### get the pages from the function
 GET {{url}}/blog/pages/
