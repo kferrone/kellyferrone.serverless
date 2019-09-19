@@ -11,19 +11,20 @@ function errorHandler(res) {
 	}
 }
 
+function getHost(req) {
+	let host = null;
+	if (process.env.HOST) {
+		host = process.env.HOST;
+	} else if (typeof req.headers['x-forwarded-host'] !== 'undefined') {
+		host = req.headers['x-forwarded-host'];
+	} else {
+		host = req.headers.host;
+	}
+	return host;
+}
+
 exports.helloWorld = functions.https.onRequest((req, res) => {
-	
-	
-	let bloggo = db.collection('posts');
-	bloggo.get()
-	.then(snapshot => {
-		const results = [];
-		snapshot.forEach(post => {
-			results.push(post.data());
-		})
-		res.send(results);
-	})
-	.catch(errorHandler(res));
+	res.send(getHost(req));
 });
 
 /**

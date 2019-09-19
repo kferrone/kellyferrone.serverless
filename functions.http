@@ -28,7 +28,10 @@ GET {{url}}/atom.xml
 ### sitemap of mine
 GET {{url}}/sitemap.xml
 
-### hello world of mine
+### hello world of mine just fx
+GET {{url}}/kellyferrone/us-central1/helloWorld
+
+### hello world of mine with rewrite
 GET {{url}}/helloWorld
 
 ### get the posts from the function
