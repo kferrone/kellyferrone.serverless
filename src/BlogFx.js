@@ -19,20 +19,40 @@ function errorHandler(res) {
 	}
 }
 
-app.get("/blog/meta", function getMeta(req, res) {
-	client.getBlog().then(blog => {
-		res
-			.set('content-type', 'application/json')
-			.status(200)
-			.send(blog.data);
-	})
-		.catch(errorHandler(res));
+app.get("/blogs/:blogID", (req, res) => {
+	console.log('The id is ' + req.params.blogID);
+	db.collection('blogs')
+		.doc(req.params.blogID)
+		.get()
+		.then(doc => {
+			if (!doc.exists) {
+				res
+					.set('content-type', 'application/json')
+					.status(404)
+					.send({
+						code: 404,
+						message: "The specified blog does not exist"
+					});
+			} else {
+				console.log('Document data:', doc.data());
+				res
+					.set('content-type', 'application/json')
+					.status(200)
+					.send(doc.data());
+			}
+		})
+		.catch(err => {
+			console.log('Error getting document', err);
+		});
 });
 
-app.get("/blogs/{blogID}/pages", function getMeta(req, res) {
-	db.collection('posts')
-		.where('kind','==','page')
-		.where('blog', '==', db.collection('blogs').doc(req.params.blogID))
+app.get("/blogs/:blogID/pages", (req, res) => {
+	// .where('blog', '==', db.collection('blogs').doc(req.params.blogID))
+	const blogID = req.params.blogID;
+	db.collection('blogs')
+		.doc(blogID)
+		.collection('posts')
+		.where('kind', '==', 'page')
 		.get()
 		.then(snapshot => {
 			const results = [];
@@ -42,6 +62,10 @@ app.get("/blogs/{blogID}/pages", function getMeta(req, res) {
 				post.id = postRef.id;
 
 				post.slug = urlSlug(post.title);
+
+				post.blog = {
+					id: blogID
+				}
 
 				results.push(post);
 			});
@@ -53,17 +77,18 @@ app.get("/blogs/{blogID}/pages", function getMeta(req, res) {
 		.catch(errorHandler(res));
 });
 
-app.get("/blogs/{blogID}/posts", function getMeta(req, res) {
-
-	db.collection('posts')
-		.where('kind','==','post')
-		.where('blog', '==', db.collection('blogs').doc(req.params.blogID))
+app.get("/blogs/:blogID/posts", (req, res) => {
+	const blogID = req.params.blogID;
+	db.collection('blogs')
+		.doc(blogID)
+		.collection('posts')
+		.where('kind', '==', 'post')
 		.get()
 		.then(snapshot => {
 			const results = [];
 			snapshot.forEach(postRef => {
 				let post = postRef.data();
-				console.log('The post id is ' + postRef.id);
+				console.log('The post id is ', post);
 
 				post.id = postRef.id;
 
@@ -78,7 +103,7 @@ app.get("/blogs/{blogID}/posts", function getMeta(req, res) {
 				post.slug = urlSlug(post.title);
 
 				post.blog = {
-					id: post.blog.id
+					id: blogID
 				}
 
 				results.push(post);
@@ -91,7 +116,7 @@ app.get("/blogs/{blogID}/posts", function getMeta(req, res) {
 		.catch(errorHandler(res));
 });
 
-app.get("/blog/post/:postID/comments", function getMeta(req, res) {
+app.get("/blogs/post/:postID/comments", function getMeta(req, res) {
 	client.getPostComments(req.params.postID).then(comments => {
 		res
 			.set('content-type', 'application/json')

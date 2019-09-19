@@ -35,4 +35,7 @@ GET {{url}}/helloWorld
 GET {{url}}/blogs/{{BLOG_ID}}/posts/
 
 ### get the pages from the function
-GET {{url}}/blog/pages/
+GET {{url}}/blogs/{{BLOG_ID}}/pages/
+
+### get the meta
+GET {{url}}/blogs/{{BLOG_ID}}/
