@@ -63,8 +63,8 @@ exports.getTemplate = function(config, option = 'defaultValue') {
 				title: remoteConfig.parameters.title[option].value,
 				message: remoteConfig.parameters.message[option].value,
 				email: remoteConfig.parameters.email[option].value,
-				published: config.published,
-				updated: config.updated
+				published: config.app.published,
+				updated: config.app.updated
 			};
 			return Promise.resolve(appConfig);
 		})
