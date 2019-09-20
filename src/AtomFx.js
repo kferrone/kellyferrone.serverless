@@ -1,5 +1,7 @@
 const AtomBuilder = require('./AtomBuilder');
 const excerptHtml = require('excerpt-html');
+const {getTemplate} = require('./RemoteConfig');
+const urlSlug = require('url-slug');
 
 function postToAtomEntry(post) {
 	//let exerpt = '';
@@ -31,10 +33,10 @@ function postToAtomEntry(post) {
 			'@type': 'text/html',
 			'@title': post.title
 		},
-		updated: post.updated,
-		published: post.published,
+		updated: post.updated.toDate().toISOString(),
+		published: post.published.toDate().toISOString(),
 		author: {
-			name: post.author.displayName
+			name: 'Kelly Ferrone'
 		},
 		category: ''
 	}
@@ -45,59 +47,46 @@ function metaToAtomMeta(meta) {
 		id: '',
 		title: {
 			'@type': 'html',
-			'#text': meta.name
+			'#text': meta.title
 		},
-		subtitle: meta.description,
+		subtitle: meta.message,
 		updated: meta.updated,
 		generator: {
-			'@uri': '',
-			'@version': '',
+			'@uri': 'https://firebase.google.com/',
+			'@version': 'v1',
 			'#text': 'Google Cloud Function'
 		},
 		author: {
-			name: '',
-			email: '',
-			uri: ''
+			name: 'Kelly Ferrone',
+			email: 'info@kellyferrone.com',
+			uri: 'https://kellyferrone.com'
 		}
 	}
 }
 
-function buildAtom(meta = null, posts = Array, pretty = false) {
+function buildAtom(meta = null, posts = Array, host = '', pretty = false) {
 	let atomBuilder = new AtomBuilder();
 
 	if (meta !== null) atomBuilder.setMeta(metaToAtomMeta(meta));
 
-	posts.forEach((post) => {
-		atomBuilder.add(postToAtomEntry(post));
+	posts.forEach((postRef) => {
+		atomBuilder.add(postToAtomEntry(postRef.data()));
 	});
 	return atomBuilder.finish(pretty);
 }
 
-exports.getAtom = function(client) {
+exports.getAtom = function(db, config, host) {
 	return Promise.resolve()
 		.then(() => {
 			return Promise.all([
-				client.getBlog(),
-				client.getPosts()
+				getTemplate(config),
+                db.collection('posts').get()
 			]);
 		})
-		.then((values) => {
-			//get the blog meta and posts from the promised values
-			let posts;
-			let blog;
-			values.forEach(({data}) => {
-				switch(data.kind) {
-					case 'blogger#postList':
-						posts = data.items;
-						break;
-					case 'blogger#blog':
-						blog = data;
-						break;
-				}
-			});
+		.then(([meta,posts]) => {
 
 			//get the atom file
-			let atomFile = buildAtom(blog,posts, true);
+			const atomFile = buildAtom(meta,posts, host, true);
 
 			return Promise.resolve(atomFile);
 		});

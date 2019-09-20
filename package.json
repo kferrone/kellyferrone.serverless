@@ -37,7 +37,11 @@
     "sendgrid": "^5.2.3",
     "url-slug": "^2.2.0-alpha.0",
     "uuid": "^3.3.2",
-    "xmlbuilder": "^11.0.0"
+    "xmlbuilder": "^11.0.0",
+    "google-auth-library": "^0.10.0",
+    "googleapis": "^20.1.0",
+    "request-promise": "^4.2.2",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",

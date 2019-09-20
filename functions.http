@@ -28,17 +28,20 @@ GET {{url}}/atom.xml
 ### sitemap of mine
 GET {{url}}/sitemap.xml
 
+### gets the config
+GET {{url}}/meta
+
 ### hello world of mine just fx
-GET {{url}}/kellyferrone/us-central1/helloWorld
+GET {{url}}/kellyferrone/us-central1/helloWorld?option=default
 
 ### hello world of mine with rewrite
 GET {{url}}/helloWorld
 
 ### get the posts from the function
-GET {{url}}/blogs/{{BLOG_ID}}/posts/
+GET {{url}}/blog/{{BLOG_ID}}/posts/
 
 ### get the pages from the function
-GET {{url}}/blogs/{{BLOG_ID}}/pages/
+GET {{url}}/blog/{{BLOG_ID}}/pages/
 
 ### get the meta
-GET {{url}}/blogs/{{BLOG_ID}}/
+GET {{url}}/blog/{{BLOG_ID}}/

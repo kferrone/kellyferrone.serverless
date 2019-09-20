@@ -1,10 +1,8 @@
 const express = require("express");
 const app = express();
-const blogger = require('./Blogger');
 const excerptHtml = require('excerpt-html');
 const urlSlug = require('url-slug');
 
-let client = null;
 let db = null;
 let config = null;
 
@@ -19,40 +17,8 @@ function errorHandler(res) {
 	}
 }
 
-app.get("/blogs/:blogID", (req, res) => {
-	console.log('The id is ' + req.params.blogID);
-	db.collection('blogs')
-		.doc(req.params.blogID)
-		.get()
-		.then(doc => {
-			if (!doc.exists) {
-				res
-					.set('content-type', 'application/json')
-					.status(404)
-					.send({
-						code: 404,
-						message: "The specified blog does not exist"
-					});
-			} else {
-				console.log('Document data:', doc.data());
-				res
-					.set('content-type', 'application/json')
-					.status(200)
-					.send(doc.data());
-			}
-		})
-		.catch(err => {
-			console.log('Error getting document', err);
-		});
-});
-
-app.get("/blogs/:blogID/pages", (req, res) => {
-	// .where('blog', '==', db.collection('blogs').doc(req.params.blogID))
-	const blogID = req.params.blogID;
-	db.collection('blogs')
-		.doc(blogID)
-		.collection('posts')
-		.where('kind', '==', 'page')
+app.get("/blog/pages", (req, res) => {
+	db.collection('pages')
 		.get()
 		.then(snapshot => {
 			const results = [];
@@ -62,10 +28,6 @@ app.get("/blogs/:blogID/pages", (req, res) => {
 				post.id = postRef.id;
 
 				post.slug = urlSlug(post.title);
-
-				post.blog = {
-					id: blogID
-				}
 
 				results.push(post);
 			});
@@ -77,12 +39,8 @@ app.get("/blogs/:blogID/pages", (req, res) => {
 		.catch(errorHandler(res));
 });
 
-app.get("/blogs/:blogID/posts", (req, res) => {
-	const blogID = req.params.blogID;
-	db.collection('blogs')
-		.doc(blogID)
-		.collection('posts')
-		.where('kind', '==', 'post')
+app.get("/blog/posts", (req, res) => {
+	db.collection('posts')
 		.get()
 		.then(snapshot => {
 			const results = [];
@@ -102,10 +60,6 @@ app.get("/blogs/:blogID/posts", (req, res) => {
 
 				post.slug = urlSlug(post.title);
 
-				post.blog = {
-					id: blogID
-				}
-
 				results.push(post);
 			});
 			res
@@ -116,18 +70,21 @@ app.get("/blogs/:blogID/posts", (req, res) => {
 		.catch(errorHandler(res));
 });
 
-app.get("/blogs/post/:postID/comments", function getMeta(req, res) {
-	client.getPostComments(req.params.postID).then(comments => {
-		res
-			.set('content-type', 'application/json')
-			.status(200)
-			.send(comments.data);
-	})
+app.get("/blog/posts/:postID/comments", function getMeta(req, res) {
+	db.collection('posts')
+		.doc(req.params.postID)
+		.collection('comments')
+		.get()
+		.then((snapshot) => {
+			const results = [];
+			snapshot.forEach(commentRef => {
+				results.push(commentRef.data());
+			});
+		})
 		.catch(errorHandler(res));
 });
 
 exports.getApp = function (configuration, database) {
-	client = blogger.getClient(configuration.blogger.blogid, configuration.blogger.key);
 	db = database;
 	config = configuration;
 	return app;

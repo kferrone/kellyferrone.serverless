@@ -1,5 +1,7 @@
 const RssBuilder = require('./RssBuilder');
 const excerptHtml = require('excerpt-html');
+const {getTemplate} = require('./RemoteConfig');
+const urlSlug = require('url-slug');
 
 function postToRssItem(post) {
 	//let exerpt = '';
@@ -16,62 +18,49 @@ function postToRssItem(post) {
 		description: exerpt,
 		link: '',
 		guid: '',
-		pubDate: post.published,
-		author: post.author.displayName,
+		pubDate: post.published.toDate().toISOString(),
+		author: 'Kelly Ferrone',
 		category: ''
 	}
 }
 
 function metaToRssMeta(meta) {
 	return {
-		title: meta.name,
-		description: meta.description,
+		title: meta.title,
+		description: meta.message,
 		link: '',
 		lastBuildDate: meta.updated,
 		pubDate: meta.published,
 		ttl: 60,
 		copyright: '',
-		language: meta.locale.language,
+		language: 'en',
 		generator: 'Google Cloud Function'
 	}
 }
 
-function buildRss(meta = null, posts = Array, pretty = false) {
+function buildRss(meta = null, posts = Array, host = '', pretty = false) {
 	let rssBuilder = new RssBuilder();
 
 	if (meta !== null) rssBuilder.setMeta(metaToRssMeta(meta));
 
-	posts.forEach((post) => {
-		rssBuilder.add(postToRssItem(post));
+	posts.forEach((postRef) => {
+		rssBuilder.add(postToRssItem(postRef.data()));
 	});
 	return rssBuilder.finish(pretty);
 }
 
-exports.getRss = function(client) {
+exports.getRss = function(db, config, host) {
 	return Promise.resolve()
 		.then(() => {
 			return Promise.all([
-				client.getBlog(),
-				client.getPosts()
+				getTemplate(config),
+                db.collection('posts').get()
 			]);
 		})
-		.then((values) => {
-			//get the blog meta and posts from the promised values
-			let posts;
-			let blog;
-			values.forEach(({data}) => {
-				switch(data.kind) {
-					case 'blogger#postList':
-						posts = data.items;
-						break;
-					case 'blogger#blog':
-						blog = data;
-						break;
-				}
-			});
+		.then(([meta,posts]) => {
 
 			//get the rss file
-			let rssFile = buildRss(blog,posts, true);
+			let rssFile = buildRss(meta, posts, host, true);
 
 			return Promise.resolve(rssFile);
 		});

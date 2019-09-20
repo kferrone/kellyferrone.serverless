@@ -1,4 +1,5 @@
 const SitemapBuilder = require('./SitemapBuilder');
+const urlSlug = require('url-slug');
 
 /**
  * Pass in a list of URL objects and a sitemap will be made. 
@@ -14,57 +15,25 @@ function buildSitemap(listOfURL = Array,pretty = false) {
 }
 
 /**
- * Builds the list of URL needed for a sitemap.
- * @param blogItems A list of items from blogger. i.e. pages or posts
- * @param host The base hostname of the website.
- */
-function buildUrls(blogItems, host) {
-    let listOfURL = new Array();
-    blogItems.forEach((item) => {
-        let title = sanitizeTitle(item.title);
-        listOfURL.push({
-            loc: `${host}/${title}`,
-            lastMod: item.updated
-        });
-    });
-    return listOfURL;
-}
-
-/**
- * Takes a nice human readable title and replaces spaces with underscores and lowercases it. 
- * @param title Some title in human readable form. 
- */
-function sanitizeTitle(title) {
-    return title.toLowerCase().split(' ').join('_');
-}
-
-/**
  * Builds a sitemap for the front end based on bloggers pages and posts.
  * The extra views which are not a page or post are appended as well. 
  * @param req The request object from some client.
  * @param res The response object to send back to the client.
  */
-exports.getSitemap = function(client,config) {
+exports.getSitemap = function(db,host) {
     return Promise.resolve()
         .then(() => {
 
             //make sure the request only returns the title and date updated, it's all we need
-            var params = {
-                fields: 'kind,items(title,updated)',
-                status: 'live'
-            };
+            var params = ['title','updated'];
 
             //we need the pages and posts, no particular order is needed
             return Promise.all([
-                client.getPages(params),
-                client.getPosts(params)
+                db.collection('pages').select(...params).get(),
+                db.collection('posts').select(...params).get()
             ]);
         })
-        .then((values) => {
-            //the hostname to prefix each page and post with
-            const host = config.host;
-            const BLOGGER_POSTLIST = 'blogger#postList';
-            const BLOGGER_PAGELIST = 'blogger#pageList';
+        .then(([pages,posts]) => {
 
             //these are the static views which will always be present
             var listOfURL = [
@@ -73,15 +42,25 @@ exports.getSitemap = function(client,config) {
                 {loc: `${host}/#/blog`}
             ];
 
-            //make a list of URLs from the promised pages and posts
-            values.forEach(({data}) => {
-                let path = (data.kind == BLOGGER_POSTLIST) ? `#/post` : '#';
-                let listOfItems = buildUrls(data.items,`${host}/${path}`);
-                listOfURL = listOfURL.concat(listOfItems);
+            //make a list of URLs for the pages
+            pages.forEach((pageRef) => {
+                const page = pageRef.data();
+                listOfURL.push({
+                    loc: `${host}/#/${urlSlug(page.title)}`,
+                    lastMod: page.updated.toDate().toISOString()
+                });
+            });
+
+            posts.forEach((postRef) => {
+                const post = postRef.data();
+                listOfURL.push({
+                    loc: `${host}/#/posts/${urlSlug(post.title)}`,
+                    lastMod: post.updated.toDate().toISOString()
+                });
             });
 
             //finally add all of the URLs to the actual sitemap XML
-            let siteMap = buildSitemap(listOfURL,false);
+            let siteMap = buildSitemap(listOfURL,true);
 
             return Promise.resolve(siteMap);
         });

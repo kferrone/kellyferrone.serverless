@@ -1,11 +1,10 @@
 
 const { functions, db, config } = require('./src/Firebase');
 const cors = require('cors');
-const blogger = require('./src/Blogger');
 
 function errorHandler(res) {
 	return e => {
-		console.error('There was an error',e);
+		//console.error('There was an error',e);
 		res.status(500).send(e);
 		return Promise.reject(e);
 	}
@@ -24,7 +23,19 @@ function getHost(req) {
 }
 
 exports.helloWorld = functions.https.onRequest((req, res) => {
-	res.send(getHost(req));
+	res.send('hello world');
+});
+
+exports.metaFx = functions.https.onRequest((req,res) => {
+	const {getTemplate} = require('./src/RemoteConfig');
+	getTemplate(config,req.query.option)
+		.then((appConfig) => {
+			res
+				.set('content-type', 'application/json')
+				.status(200)
+				.send(appConfig);
+		})
+		.catch(errorHandler(res));
 });
 
 /**
@@ -32,8 +43,7 @@ exports.helloWorld = functions.https.onRequest((req, res) => {
  */
 exports.rssFeed = functions.https.onRequest((req,res) => {
 	const rssFx = require('./src/RssFx');
-	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
-	rssFx.getRss(client)
+	rssFx.getRss(db, config, getHost(req))
 	.then(rssFile => {
 		res
 			.set('content-type', 'application/rss+xml; charset=UTF-8')
@@ -47,9 +57,8 @@ exports.rssFeed = functions.https.onRequest((req,res) => {
  * Get the Atom.xml
  */
 exports.atomFeed = functions.https.onRequest((req,res) => {
-	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
 	require('./src/AtomFx')
-		.getAtom(client)
+		.getAtom(db, config, getHost(req))
 		.then(atomFile => {
 			res
 				.set('content-type', 'application/atom+xml; charset=UTF-8')
@@ -64,8 +73,7 @@ exports.atomFeed = functions.https.onRequest((req,res) => {
  */
 exports.siteMap = functions.https.onRequest((req, res) => {
 	const sitemapFx = require('./src/SitemapFx');
-	const client = blogger.getClient(config.app.blogger.blogid,config.app.blogger.key);
-	sitemapFx.getSitemap(client,config.app)
+	sitemapFx.getSitemap(db,getHost(req))
 	.then(siteMap => {
 		//send off the sitemap to the requestor
 		res
@@ -99,6 +107,6 @@ exports.sendgridWebhook = functions.https.onRequest((req, res) => {
 });
 
 /**
- * Handles all the blogger content
+ * Handles all the blog content
  */
 exports.blogFx = functions.https.onRequest(require('./src/BlogFx').getApp(config.app, db));
