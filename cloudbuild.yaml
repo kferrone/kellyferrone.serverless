@@ -5,7 +5,7 @@ steps:
     args: ['install']
 
   - id: deploy
-    name: 'gcr.io/kellyferrone/firebase'
+    name: 'gcr.io/$PROJECT_ID/firebase'
     args: ['deploy','--only','functions']
     env:
       - 'FIREBASE_TOKEN=$_FIREBASE_TOKEN'
