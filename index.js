@@ -19,7 +19,7 @@ function getHost(req) {
 	} else {
 		host = req.headers.host;
 	}
-	return host;
+	return `https://${host}`;
 }
 
 exports.helloWorld = functions.https.onRequest((req, res) => {
