@@ -1,7 +1,7 @@
 {
   "name": "serverless-fx",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A cloud function to build a sitemap for the frontend site",
   "homepage": "https://github.com/kferrone/kellyferrone.serverless#readme",
   "main": "index.js",
