@@ -1,19 +1,26 @@
 {
   "functions": {
-	"source": "./",
-	"ignore": [
-	  "firebase.json",
-	  "**/node_modules/**",
-	  ".firebaserc",
-	  ".editorconfig",
-	  ".vscode/**",
-	  "*.md",
-	  ".gitignore",
-	  ".gcloudignore",
-	  ".project",
-	  ".settings/**",
-	  "cloudbuild.yaml",
-	  "*.sh"
+    "source": "./",
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**",
+      ".firebaserc",
+      ".editorconfig",
+      ".vscode/**",
+      "*.md",
+      ".gitignore",
+      ".gcloudignore",
+      ".project",
+      ".settings/**",
+      "cloudbuild.yaml",
+      "*.sh"
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }
