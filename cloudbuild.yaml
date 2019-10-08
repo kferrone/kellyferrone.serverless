@@ -9,6 +9,8 @@ steps:
     args: ['deploy','--only','functions']
     env:
       - 'FIREBASE_TOKEN=$_FIREBASE_TOKEN'
+      - 'FIREBASERC=$_FIREBASERC'
 
 substitutions:
   _FIREBASE_TOKEN: token
+  _FIREBASERC: Your firebaserc file

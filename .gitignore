@@ -5,4 +5,5 @@ test.js
 .*.md.html
 env/
 firebase-debug.log
+.firebaserc
 .runtimeconfig.json
