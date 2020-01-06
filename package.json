@@ -7,7 +7,9 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "push:sitemapper": "gcloud functions deploy siteMapper --runtime nodejs6 --trigger-http"
+    "push:sitemapper": "gcloud functions deploy siteMapper --runtime nodejs6 --trigger-http",
+    "serve": "firebase serve",
+    "firestore": "firebase emulators:start --only firestore"
   },
   "repository": {
     "type": "git",
@@ -22,7 +24,7 @@
   "author": "Kelly Ferrone",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kferrone/kellyferrone.serverless/issues"
+    "url": "https://github.com/kferrone/kellyferrone.com/issues"
   },
   "dependencies": {
     "@google-cloud/bigquery": "^2.0.0",
@@ -44,8 +46,8 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
+    "@firebase/testing": "^0.16.4",
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
-    "ava": "~2.2.0",
     "proxyquire": "^2.1.0",
     "sinon": "^7.0.0"
   },

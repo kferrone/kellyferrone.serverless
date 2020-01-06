@@ -1,5 +1,5 @@
 const express = require("express");
-const {validateFirebaseIdToken} = require("../middle/FirebaseValidator");
+const {validateFirebaseIdToken} = require("./middle/FirebaseValidator");
 const {logError} = require("./error/Basics");
 
 exports.getApp = function (config, db) {
@@ -9,8 +9,8 @@ exports.getApp = function (config, db) {
 	app.disable("x-powered-by");
 
 	app.post("*", validateFirebaseIdToken);
-	app = require("./routes/Pages")(app, db, config);
-	app = require("./routes/Posts")(app, db, config);
+	require("./routes/Pages")(app, db, config);
+	require("./routes/Posts")(app, db, config);
 
 	app.use(logError);
 
